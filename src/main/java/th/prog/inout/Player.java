@@ -5,6 +5,7 @@ import th.prog.things.OscillatorModel;
 
 import javax.sound.sampled.*;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class Player {
 
@@ -14,33 +15,34 @@ public class Player {
     public void initiatePlayer() {
         try {
             Mixer.Info[] mixInfo = AudioSystem.getMixerInfo();
-            /*for (Mixer.Info info : mixInfo) {
+            for (Mixer.Info info : mixInfo) {
                 System.out.println(" Mixer description :" + info.getDescription() + "\n");
                 System.out.println(" Mixer name        :" + info.getName() + "\n");
                 System.out.println(" Mixer vendor      :" + info.getVendor() + "\n");
                 System.out.println(" Mixer version     :" + info.getVersion() + "\n");
                 System.out.println("------------------------------------------------");
 
-            }*/
-            Mixer mixer = AudioSystem.getMixer(mixInfo[0]);
-            Line.Info[] lineinfo = mixer.getSourceLineInfo();
-            for (Line.Info info : lineinfo) {
-/*                if(info instanceof Line.Info)
-                {
-                    Arrays.stream(((DataLine.Info) info).getFormats()).iterator().forEachRemaining(f->
-                    {
-                        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                        System.out.println("channels : "+ f.getChannels());
-                        System.out.println("encoding : "+f.getEncoding());
-                        System.out.println("framerate : "+ f.getFrameRate());
-                        System.out.println("frame size "+f.getFrameSize());
-                        System.out.println("sample rate :" + f.getSampleRate());
-                        System.out.println("sample size bits : "+ f.getSampleSizeInBits());
-                        System.out.println(" is big endian ?  : "+f.isBigEndian());
-                        System.out.println("---------------------------------------------------");
-                    });
-                }*/
             }
+            Mixer mixer = AudioSystem.getMixer(mixInfo[mixInfo.length- 1]);
+            Line.Info[] lineinfo = mixer.getSourceLineInfo();
+         // for (Line.Info info : lineinfo) {
+         //   if(info instanceof Line.Info)
+         //     {
+         //         Arrays.stream(((DataLine.Info) info).getFormats()).iterator().forEachRemaining(f->
+
+         //          {
+         //             System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+         //             System.out.println("channels : "+ f.getChannels());
+         //             System.out.println("encoding : "+f.getEncoding());
+         //             System.out.println("framerate : "+ f.getFrameRate());
+         //             System.out.println("frame size "+f.getFrameSize());
+         //             System.out.println("sample rate :" + f.getSampleRate());
+         //             System.out.println("sample size bits : "+ f.getSampleSizeInBits());
+         //             System.out.println(" is big endian ?  : "+f.isBigEndian());
+         //             System.out.println("---------------------------------------------------");
+         //         });
+         //     }
+         // }
             line = AudioSystem.getSourceDataLine(format);
             line.open(format);
             line.start();
@@ -66,7 +68,7 @@ public class Player {
             OscillatorModel snaar = new OscillatorModel(440);
             snaar.pluck();
             ByteBuffer buffer = ByteBuffer.allocate(4);
-            Byte s = 0;
+            byte s = 0;
             while (!snaar.isSilent(s))
             {
                 s = snaar.tic();
@@ -77,8 +79,6 @@ public class Player {
                     buffer.clear();
                 }
             }
-           ;
-
             line.drain();
             line.stop();
             line.close();
