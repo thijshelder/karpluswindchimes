@@ -53,6 +53,7 @@ public class Player {
 
     public void playAString(Instrument instrument, int i) {
                 instrument.playStringByIndex(line, i);
+                instrument.muteStringByIndex(line, i);
       }
 
     public void muteString(Instrument instrument, int i)

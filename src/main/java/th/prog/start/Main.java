@@ -1,5 +1,6 @@
 package th.prog.start;
 
+import th.prog.composer.Scaletor;
 import th.prog.inout.Player;
 import th.prog.things.Instrument;
 
@@ -10,8 +11,12 @@ public class Main {
         //KeyBoard board = new KeyBoard();
         Player player = new Player();
         player.initiatePlayer();
-        Instrument instrument = new Instrument(110.0d, 220.0d, 440.0d, 340.0d, 880.0d);
-        player.playAString(instrument, 1);
+        Instrument instrument = new Instrument(new Scaletor().createChromaticScale(220.0d, 440.0d, 2));
+        for(int i =0;i<instrument.getNumberOfStrings();i++){
+            player.playAString(instrument, i);
+
+        }
+
     }
 
 }

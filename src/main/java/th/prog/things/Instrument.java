@@ -19,8 +19,7 @@ public class Instrument {
     final int SAMPLERATE = 44100;
 
     public Instrument(double... args) {
-        Arrays.stream(args).forEach(v ->
-        {
+        Arrays.stream(args).forEach(v -> {
             snaren.add(new StringModel(SAMPLERATE, v, 1 - 0.00000000000001 / v));
         });
     }
@@ -36,6 +35,10 @@ public class Instrument {
                 buffer.clear();
             }
         }
+    }
+
+    public int getNumberOfStrings() {
+        return snaren.size();
     }
 
     public void muteStringByIndex(SourceDataLine line, int index) {
