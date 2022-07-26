@@ -28,10 +28,10 @@ public class TestStringModel {
     {
         StringModel model = new StringModel(new Byte[]{5,8,9,2,7,3,2,4,8});
 
-        Byte s = model.tic(true);
+        Byte s = model.tic();
         while( model.isActive())
         {
-            System.out.println(model.tic(true));
+            System.out.println(model.tic());
         }
     }
 }

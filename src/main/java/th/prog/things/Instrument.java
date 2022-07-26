@@ -18,7 +18,7 @@ public class Instrument {
     List<StringModel> snaren = new ArrayList<>();
     final int SAMPLERATE = 44100;
 
-    public Instrument(double... args) {
+    public Instrument(Double... args) {
         Arrays.stream(args).forEach(v -> {
             snaren.add(new StringModel(SAMPLERATE, v, 1 - 0.00000000000001 / v));
         });
@@ -26,9 +26,10 @@ public class Instrument {
 
     public void playStringByIndex(SourceDataLine line, int index) {
         ByteBuffer buffer = ByteBuffer.allocate(8);
+        StringModel resonatingString = snaren.get(index);
         snaren.get(index).pluck();
         while (snaren.get(index).isActive()) {
-            byte s = (byte) snaren.get(index).tic(index % 2 == 0);
+            byte s = (byte) snaren.get(index).tic();
             buffer.put(s);
             if (!buffer.hasRemaining()) {
                 line.write(buffer.array(), 0, 8);
@@ -36,6 +37,44 @@ public class Instrument {
             }
         }
     }
+
+    public void playStringWithReverb(SourceDataLine line, int index) {
+        ByteBuffer buffer = ByteBuffer.allocate(8);
+        StringModel resonatingString = snaren.get(index);
+        StringModel resonator;
+        resonatingString.pluck();
+        resonator = new StringModel(resonatingString.memory);
+        //resonators.add(new StringModel(resonatingString.memory));
+        while (resonatingString.isActive()|| resonator.isActive()) {
+            byte s = resonatingString.tic();
+            if(resonatingString.cycles>4)
+            {
+               s = (byte) (s -  (byte)( resonator.getTimes()*0.00005)* resonator.tic());
+            }
+            buffer.put(s);
+            if (!buffer.hasRemaining()) {
+                line.write(buffer.array(), 0, 8);
+                buffer.clear();
+            }
+        }
+
+    }
+
+    public void playMultipleStringsByIndices(SourceDataLine line, int... indices) {
+        ByteBuffer buffer = ByteBuffer.allocate(8);
+        List<StringModel> filaments = new ArrayList<>();
+        Arrays.stream(indices).forEach(i -> filaments.add(snaren.get(i)));
+        filaments.forEach(f -> f.pluck());
+        while (filaments.get(0).isActive()) {
+            buffer.put(filaments.stream().map(f -> (int) f.tic()).reduce(0, Integer::sum).byteValue());
+            if (!buffer.hasRemaining()) {
+                line.write(buffer.array(), 0, 8);
+                buffer.clear();
+            }
+        }
+    }
+
+    // public void addReverb
 
     public int getNumberOfStrings() {
         return snaren.size();

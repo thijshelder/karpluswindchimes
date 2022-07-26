@@ -11,7 +11,7 @@ public class TestScales {
     public void shouldCreateScale()
     {
         Scaletor scaletor = new Scaletor();
-        double[] scale = scaletor.createChromaticScale(220.0d, 440.0d, 2);
-        Assert.assertTrue(Math.round(scale[11])==440.0d);
+        Double[] scale = scaletor.createChromaticScale(220.0d, 2);
+        Assert.assertTrue("octave should be "  + 440 +  " was "+ scale[12], Math.round(scale[12])==440.0d);
     }
 }

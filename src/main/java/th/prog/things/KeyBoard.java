@@ -14,7 +14,7 @@ public class KeyBoard implements KeyListener, WindowListener {
     Instrument instrument = new Instrument(440.0d, 330.0d, 660.0d, 880.0d);
     Player player = new Player();
 
-    public KeyBoard()
+    public KeyBoard(Instrument instrument)
     {
         player.initiatePlayer();
         JFrame frame = new JFrame();

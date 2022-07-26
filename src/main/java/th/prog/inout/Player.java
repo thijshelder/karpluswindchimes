@@ -21,46 +21,55 @@ public class Player {
                 System.out.println(" Mixer vendor      :" + info.getVendor() + "\n");
                 System.out.println(" Mixer version     :" + info.getVersion() + "\n");
                 System.out.println("------------------------------------------------");
-
             }
-            Mixer mixer = AudioSystem.getMixer(mixInfo[mixInfo.length- 1]);
+            Mixer mixer = AudioSystem.getMixer(mixInfo[mixInfo.length - 1]);
             Line.Info[] lineinfo = mixer.getSourceLineInfo();
-         // for (Line.Info info : lineinfo) {
-         //   if(info instanceof Line.Info)
-         //     {
-         //         Arrays.stream(((DataLine.Info) info).getFormats()).iterator().forEachRemaining(f->
+            // for (Line.Info info : lineinfo) {
+            //   if(info instanceof Line.Info)
+            //     {
+            //         Arrays.stream(((DataLine.Info) info).getFormats()).iterator().forEachRemaining(f->
 
-         //          {
-         //             System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++");
-         //             System.out.println("channels : "+ f.getChannels());
-         //             System.out.println("encoding : "+f.getEncoding());
-         //             System.out.println("framerate : "+ f.getFrameRate());
-         //             System.out.println("frame size "+f.getFrameSize());
-         //             System.out.println("sample rate :" + f.getSampleRate());
-         //             System.out.println("sample size bits : "+ f.getSampleSizeInBits());
-         //             System.out.println(" is big endian ?  : "+f.isBigEndian());
-         //             System.out.println("---------------------------------------------------");
-         //         });
-         //     }
-         // }
+            //          {
+            //             System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            //             System.out.println("channels : "+ f.getChannels());
+            //             System.out.println("encoding : "+f.getEncoding());
+            //             System.out.println("framerate : "+ f.getFrameRate());
+            //             System.out.println("frame size "+f.getFrameSize());
+            //             System.out.println("sample rate :" + f.getSampleRate());
+            //             System.out.println("sample size bits : "+ f.getSampleSizeInBits());
+            //             System.out.println(" is big endian ?  : "+f.isBigEndian());
+            //             System.out.println("---------------------------------------------------");
+            //         });
+            //     }
+            // }
             line = AudioSystem.getSourceDataLine(format);
             line.open(format);
             line.start();
         } catch (Exception e) {
-            throw new RuntimeException(" could not get that line baby");
+            throw new RuntimeException(" could not get line. ");
         }
     }
 
     public void playAString(Instrument instrument, int i) {
-                instrument.playStringByIndex(line, i);
-                instrument.muteStringByIndex(line, i);
-      }
-
-    public void muteString(Instrument instrument, int i)
-    {
+        instrument.playStringByIndex(line, i);
         instrument.muteStringByIndex(line, i);
     }
 
+    public void playAReverbingString(Instrument instrument, int stringDex){
+        instrument.playStringWithReverb(line, stringDex);
+        instrument.muteStringByIndex(line, stringDex);
+    }
+
+
+    public void playAchord(Instrument instrument, int... i){
+        instrument.playMultipleStringsByIndices(line, i);
+        //Arrays.stream(i).forEach(j ->instrument.muteStringByIndex(line, j));
+
+    }
+
+    public void muteString(Instrument instrument, int i) {
+        instrument.muteStringByIndex(line, i);
+    }
 
     public void playAnOscillator() {
         try {
@@ -70,8 +79,7 @@ public class Player {
             snaar.pluck();
             ByteBuffer buffer = ByteBuffer.allocate(4);
             byte s = 0;
-            while (!snaar.isSilent(s))
-            {
+            while (!snaar.isSilent(s)) {
                 s = snaar.tic();
 
                 buffer.put(s);
@@ -94,13 +102,10 @@ public class Player {
         return ByteBuffer.allocate(4).putFloat(f).array();
     }
 
-    public void closeLines()
-    {
+    public void closeLines() {
         line.drain();
         line.stop();
         line.close();
         line = null;
     }
-
-
 }

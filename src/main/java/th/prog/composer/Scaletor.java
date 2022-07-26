@@ -1,25 +1,41 @@
 package th.prog.composer;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Scaletor {
 
-    private double[] createScale(double lowerOctave, double upperOctave, int divisor, int octaves) {
-        double[] notes = new double[divisor*octaves];
-        if (Math.round(upperOctave / lowerOctave) != 2) {
-            throw new MusicalTheoryException("an octave is defined as a requency with an exact factor 2 difference, your octave does not compute");
-        }
-        notes[0] = lowerOctave + ((upperOctave*octaves)-lowerOctave)/(divisor*octaves);
-        for(int i=1;i<divisor*octaves;i++){
-            notes[i] = notes[i-1] + (((upperOctave*octaves) - notes[i-1])/(divisor*octaves));
-        }
+    private Double[] createScale(double lowerOctave, double divisor, int octaves) {
+        Double[] notes = new Double[((Double) divisor).intValue() * octaves];
+        double factor = Math.pow(2, 1/divisor);
+        notes[0] = lowerOctave;
+        for (int i = 1; i < notes.length; i++) {
+                notes[i] = notes[i - 1] * factor;
+            }
         return notes;
     }
 
-    public double[] createChromaticScale(double lowerOctave, double upperOctave, int octaves){
-        return createScale(lowerOctave, upperOctave, 12, octaves);
+    public Double[] createChromaticScale(double lowerOctave, int octaves) {
+        return createScale(lowerOctave, 12, octaves);
+    }
+
+    public Double[] createDiatonicScale(double lowerOctave, double upperOctave, int octaves) {
+        Double[] firstOctave = createChromaticScale(lowerOctave,  1);
+        List<Double> resultingScale = new ArrayList<>();
+        for(int  i=1;i<=octaves;i++) {
+            Double[] firstDiatonicOctave = selectTonesForDiatonicScale(firstOctave, i);
+            resultingScale.addAll(Arrays.asList(firstDiatonicOctave));
+        }
+        return (Double[]) resultingScale.toArray(new Double[]{});
     }
 
 
-    public double[] createChinesePentatonicScale(double lowerOctave, double upperOctave,int octaves){
-        return createScale(lowerOctave, upperOctave, 5, octaves);
+    public Double[] createChinesePentatonicScale(double lowerOctave, double upperOctave, int octaves) {
+        return createScale(lowerOctave, 5, octaves);
+    }
+
+    private Double[] selectTonesForDiatonicScale(Double[] chromaticScaleOneOctave, int factor){
+        return new Double[]{factor*chromaticScaleOneOctave[0], factor*chromaticScaleOneOctave[2], factor*chromaticScaleOneOctave[4], factor*chromaticScaleOneOctave[5], factor*chromaticScaleOneOctave[7], factor*chromaticScaleOneOctave[9], factor*chromaticScaleOneOctave[11]};
     }
 }
