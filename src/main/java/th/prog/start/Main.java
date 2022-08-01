@@ -11,9 +11,10 @@ public class Main {
         //KeyBoard board = new KeyBoard();
         Player player = new Player();
         player.initiatePlayer();
-        Instrument instrument = new Instrument(new Scaletor().createChromaticScale(220,  3));
-        player.playAReverbingString(instrument, 1);
-
+        Instrument instrument = new Instrument(new Scaletor().createChromaticScale(220.0d, 2));
+        for(int i =0;i<instrument.getNumberOfStrings();i++){
+            player.playAString(instrument, i);
+        }
 
     }
 

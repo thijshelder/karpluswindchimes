@@ -72,4 +72,8 @@ public class Instrument {
         snaren.get(index).setInactive();
         snaren.get(index).mute();
     }
+
+    public int getNumberOfStrings(){
+        return snaren.size();
+    }
 }
