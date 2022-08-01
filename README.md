@@ -7,7 +7,7 @@ The project is more or less POJ - maven will import all dependencies for you. Ju
 
 # Running the project
 
-Just run main. It will produce some sound for you - there is no guarantee, obviously: the project assumes the first audio device it can find is used to play sound. 
+Just run main. It will likely produce some sound for you - there is no guarantee, obviously: the project assumes the first audio device it can find is used to play sound - in most cases, that will be true, as in most cases, your system will make sure it is. However, java runs on lots of devices and I only tested on ubuntu and Windows 11. 
 The main method creates an instrument using an array of frequencies to create the strings (as in reverbing ligaments) on the instrument - actually a virtual harpsichord, if you will. There is a method to create scales for you too - the project will use a chromatic scale by default. The program will play all the strings that are created in ascending order of frequency.
 
 # Contributing
