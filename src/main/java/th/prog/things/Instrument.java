@@ -1,13 +1,10 @@
 package th.prog.things;
 
-import javax.sound.sampled.Line;
 import javax.sound.sampled.SourceDataLine;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.*;
-import java.util.stream.IntStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Instrument {
 // make being active a question of being discarded yet.
@@ -19,17 +16,14 @@ public class Instrument {
     final int SAMPLERATE = 44100;
 
     public Instrument(Double... args) {
-        Arrays.stream(args).forEach(v -> {
-            snaren.add(new StringModel(SAMPLERATE, v, 1 - 0.00000000000001 / v));
-        });
+        Arrays.stream(args).forEach(v -> snaren.add(new StringModel(SAMPLERATE, v, 1 - 0.00000000000001 / v)));
     }
 
     public void playStringByIndex(SourceDataLine line, int index) {
         ByteBuffer buffer = ByteBuffer.allocate(8);
-        StringModel resonatingString = snaren.get(index);
         snaren.get(index).pluck();
         while (snaren.get(index).isActive()) {
-            byte s = (byte) snaren.get(index).tic();
+            byte s = snaren.get(index).tic();
             buffer.put(s);
             if (!buffer.hasRemaining()) {
                 line.write(buffer.array(), 0, 8);
@@ -49,7 +43,7 @@ public class Instrument {
             byte s = resonatingString.tic();
             if(resonatingString.cycles>4)
             {
-               s = (byte) (s -  (byte)( resonator.getTimes()*0.00005)* resonator.tic());
+               s = (byte) (s +  (byte)( resonator.getTimes()*0.00005)* resonator.tic());
             }
             buffer.put(s);
             if (!buffer.hasRemaining()) {
@@ -64,7 +58,7 @@ public class Instrument {
         ByteBuffer buffer = ByteBuffer.allocate(8);
         List<StringModel> filaments = new ArrayList<>();
         Arrays.stream(indices).forEach(i -> filaments.add(snaren.get(i)));
-        filaments.forEach(f -> f.pluck());
+        filaments.forEach(StringModel::pluck);
         while (filaments.get(0).isActive()) {
             buffer.put(filaments.stream().map(f -> (int) f.tic()).reduce(0, Integer::sum).byteValue());
             if (!buffer.hasRemaining()) {
@@ -74,21 +68,8 @@ public class Instrument {
         }
     }
 
-    // public void addReverb
-
-    public int getNumberOfStrings() {
-        return snaren.size();
-    }
-
-    public void muteStringByIndex(SourceDataLine line, int index) {
+    public void muteStringByIndex(int index) {
         snaren.get(index).setInactive();
         snaren.get(index).mute();
     }
-
-    public void makeItMelodic() {
-    }
-
-    public void playOnKeyBoard() {
-    }
-
 }
