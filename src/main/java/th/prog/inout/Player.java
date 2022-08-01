@@ -5,7 +5,6 @@ import th.prog.things.OscillatorModel;
 
 import javax.sound.sampled.*;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 public class Player {
 
@@ -52,12 +51,12 @@ public class Player {
 
     public void playAString(Instrument instrument, int i) {
         instrument.playStringByIndex(line, i);
-        instrument.muteStringByIndex(line, i);
+        instrument.muteStringByIndex(i);
     }
 
     public void playAReverbingString(Instrument instrument, int stringDex){
         instrument.playStringWithReverb(line, stringDex);
-        instrument.muteStringByIndex(line, stringDex);
+        instrument.muteStringByIndex(stringDex);
     }
 
 
@@ -68,7 +67,7 @@ public class Player {
     }
 
     public void muteString(Instrument instrument, int i) {
-        instrument.muteStringByIndex(line, i);
+        instrument.muteStringByIndex(i);
     }
 
     public void playAnOscillator() {
